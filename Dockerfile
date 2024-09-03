@@ -70,7 +70,6 @@ RUN /tmp/install-mambaforge.bash
 USER ${NB_USER}
 
 COPY environment.yml /tmp/environment.yml
-COPY infra-requirements.txt /tmp/infra-requirements.txt
 RUN mamba env update -p ${CONDA_DIR} -f /tmp/environment.yml && \
 	mamba clean -afy
 
@@ -80,13 +79,10 @@ RUN R --quiet -e "install.packages('IRkernel', quiet = TRUE)" && \
 
 COPY class-libs.R /tmp/class-libs.R
 
-COPY r-packages/2023-fall-stat-20.r /tmp/r-packages/
-RUN r /tmp/r-packages/2023-fall-stat-20.r
+COPY r-packages/2024-fall-stat-20.r /tmp/r-packages/
+RUN r /tmp/r-packages/2024-fall-stat-20.r
 
 # Configure locking behavior
 COPY file-locks /etc/rstudio/file-locks
-
-# Disable visual markdown editing by default
-COPY rstudio-prefs.json /etc/rstudio/rstudio-prefs.json
 
 ENTRYPOINT ["tini", "--"]
