@@ -23,8 +23,6 @@ dependencies:
 - appmode==1.0.0
 - syncthing==1.22.2
 - gh-scoped-creds==4.1
-# RISE is useful for presentations - see https://github.com/berkeley-dsep-infra/datahub/issues/2527
-- rise==5.7.1
 - pip
 - pip:
   - git-credential-helpers==0.2
