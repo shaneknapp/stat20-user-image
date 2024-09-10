@@ -2,7 +2,7 @@
 
 source("/tmp/class-libs.R")
 
-class_name = "2023 Fall Stat 20"
+class_name = "2024 Fall Stat 20"
 
 class_libs = c(
     "fivethirtyeight", "0.6.2",
