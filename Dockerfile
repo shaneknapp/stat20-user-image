@@ -69,7 +69,7 @@ RUN /tmp/install-mambaforge.bash
 
 ## Install VS Code
 ENV VSCODE_EXTENSIONS=${CONDA_DIR}/share/code-server/extensions
-RUN install -d -o ${NB_USER} -g jovyan ${VSCODE_EXTENSIONS}
+RUN install -d -o ${NB_USER} -g ${NB_USER} ${VSCODE_EXTENSIONS}
 
 USER ${NB_USER}
 
