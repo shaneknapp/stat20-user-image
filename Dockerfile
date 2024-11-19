@@ -67,21 +67,21 @@ RUN wget --quiet -O /tmp/chrome.deb https://dl.google.com/linux/direct/google-ch
 COPY install-mambaforge.bash /tmp/install-mambaforge.bash
 RUN /tmp/install-mambaforge.bash
 
-## Install VS Code
+# Prepare VS Code extensions
 ENV VSCODE_EXTENSIONS=${CONDA_DIR}/share/code-server/extensions
 RUN install -d -o ${NB_USER} -g ${NB_USER} ${VSCODE_EXTENSIONS}
 
 USER ${NB_USER}
 
-# Install Code Server Jupyter extension
-RUN /srv/conda/bin/code-server --extensions-dir ${VSCODE_EXTENSIONS} --install-extension ms-toolsai.jupyter
-# Install Code Server Python extension
-RUN /srv/conda/bin/code-server --extensions-dir ${VSCODE_EXTENSIONS} --install-extension ms-python.python
-RUN /srv/conda/bin/code-server --extensions-dir ${VSCODE_EXTENSIONS} --install-extension quarto.quarto
-
 COPY environment.yml /tmp/environment.yml
 RUN mamba env update -p ${CONDA_DIR} -f /tmp/environment.yml && \
 	mamba clean -afy
+
+# Install Code Server Jupyter extension
+RUN ${CONDA_DIR}/bin/code-server --extensions-dir ${VSCODE_EXTENSIONS} --install-extension ms-toolsai.jupyter
+# Install Code Server Python extension
+RUN ${CONDA_DIR}/bin/code-server --extensions-dir ${VSCODE_EXTENSIONS} --install-extension ms-python.python
+RUN ${CONDA_DIR}/bin/code-server --extensions-dir ${VSCODE_EXTENSIONS} --install-extension quarto.quarto
 
 # Install IRKernel
 RUN R --quiet -e "install.packages('IRkernel', quiet = TRUE)" && \
