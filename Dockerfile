@@ -67,7 +67,17 @@ RUN wget --quiet -O /tmp/chrome.deb https://dl.google.com/linux/direct/google-ch
 COPY install-mambaforge.bash /tmp/install-mambaforge.bash
 RUN /tmp/install-mambaforge.bash
 
+## Install VS Code
+ENV VSCODE_EXTENSIONS=${CONDA_DIR}/share/code-server/extensions
+RUN install -d -o ${NB_USER} -g jovyan ${VSCODE_EXTENSIONS}
+
 USER ${NB_USER}
+
+# Install Code Server Jupyter extension
+RUN /srv/conda/bin/code-server --extensions-dir ${VSCODE_EXTENSIONS} --install-extension ms-toolsai.jupyter
+# Install Code Server Python extension
+RUN /srv/conda/bin/code-server --extensions-dir ${VSCODE_EXTENSIONS} --install-extension ms-python.python
+RUN /srv/conda/bin/code-server --extensions-dir ${VSCODE_EXTENSIONS} --install-extension quarto.quarto
 
 COPY environment.yml /tmp/environment.yml
 RUN mamba env update -p ${CONDA_DIR} -f /tmp/environment.yml && \
