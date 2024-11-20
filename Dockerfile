@@ -1,12 +1,12 @@
 FROM rocker/geospatial:4.4.1
 # https://github.com/rocker-org/rocker-versioned2/wiki/geospatial_e06f866673fa
 
-ENV NB_USER rstudio
-ENV NB_UID 1000
-ENV CONDA_DIR /srv/conda
+ENV NB_USER=rstudio
+ENV NB_UID=1000
+ENV CONDA_DIR=/srv/conda
 
 # Set ENV for all programs...
-ENV PATH ${CONDA_DIR}/bin:$PATH
+ENV PATH=${CONDA_DIR}/bin:$PATH
 
 # Pick up rocker's default TZ
 ENV TZ=Etc/UTC
@@ -19,7 +19,7 @@ RUN echo "PATH=${PATH}" >> /usr/local/lib/R/etc/Renviron.site
 RUN echo "PATH=${PATH}" >> /etc/profile
 RUN echo "export PATH" >> /etc/profile
 
-ENV HOME /home/${NB_USER}
+ENV HOME=/home/${NB_USER}
 
 WORKDIR ${HOME}
 
@@ -51,7 +51,7 @@ RUN apt-get update > /dev/null && \
     rm -rf /var/lib/apt/lists/* && \
     rm -f /tmp/quarto.deb
 
-ENV SHINY_SERVER_URL https://download3.rstudio.org/ubuntu-18.04/x86_64/shiny-server-1.5.21.1012-amd64.deb
+ENV SHINY_SERVER_URL=https://download3.rstudio.org/ubuntu-18.04/x86_64/shiny-server-1.5.21.1012-amd64.deb
 RUN curl --silent --location --fail ${SHINY_SERVER_URL} > /tmp/shiny-server.deb && \
     apt install --no-install-recommends --yes /tmp/shiny-server.deb && \
     rm /tmp/shiny-server.deb
