@@ -64,18 +64,28 @@ RUN wget --quiet -O /tmp/chrome.deb https://dl.google.com/linux/direct/google-ch
     rm -rf /var/lib/apt/lists/* && \
     rm -f /tmp/chrome.deb
 
+RUN install -d -o ${NB_USER} -g ${NB_USER} ${CONDA_DIR}
+
+USER ${NB_USER}
 COPY install-mambaforge.bash /tmp/install-mambaforge.bash
 RUN /tmp/install-mambaforge.bash
 
-# Prepare VS Code extensions
-ENV VSCODE_EXTENSIONS=${CONDA_DIR}/share/code-server/extensions
-RUN install -d -o ${NB_USER} -g ${NB_USER} ${VSCODE_EXTENSIONS}
+USER root
+RUN rm -rf ${HOME}/.cache
 
 USER ${NB_USER}
-
 COPY environment.yml /tmp/environment.yml
+
 RUN mamba env update -p ${CONDA_DIR} -f /tmp/environment.yml && \
 	mamba clean -afy
+
+# Prepare VS Code extensions
+USER root
+ENV VSCODE_EXTENSIONS=${CONDA_DIR}/share/code-server/extensions
+RUN install -d -o ${NB_USER} -g ${NB_USER} ${VSCODE_EXTENSIONS} && \
+    chown ${NB_USER}:${NB_USER} ${CONDA_DIR}/share/code-server
+
+USER ${NB_USER}
 
 # Install Code Server Jupyter extension
 RUN ${CONDA_DIR}/bin/code-server --extensions-dir ${VSCODE_EXTENSIONS} --install-extension ms-toolsai.jupyter
