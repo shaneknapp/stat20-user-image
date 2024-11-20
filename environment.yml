@@ -12,6 +12,7 @@ dependencies:
 - jupyter-syncthing-proxy==1.0.3
 - jupyter-archive==3.4.0
 - jupyter-resource-usage==1.1.0
+- jupyter-vscode-proxy==0.6
 - notebook==7.2.2
 - nbconvert==7.6.0
 - nbgitpuller==1.2.1
@@ -23,6 +24,7 @@ dependencies:
 - appmode==1.0.0
 - syncthing==1.22.2
 - gh-scoped-creds==4.1
+- code-server==4.23.1
 - pip
 - pip:
   - git-credential-helpers==0.2
@@ -30,5 +32,6 @@ dependencies:
   # https://discourse.jupyter.org/t/request-for-implementation-instrument-libraries-actively-used-by-users-on-a-jupyterhub/7994?u=yuvipanda
   - git+https://github.com/shaneknapp/python-popularity-contest.git@add-error-handling
   - jupyter-shiny-proxy==1.1
+  - jupyterlab-quarto==0.3.5
   - nb2pdf==0.6.2
   - nbpdfexport==0.2.1

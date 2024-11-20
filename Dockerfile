@@ -1,12 +1,12 @@
 FROM rocker/geospatial:4.4.1
 # https://github.com/rocker-org/rocker-versioned2/wiki/geospatial_e06f866673fa
 
-ENV NB_USER rstudio
-ENV NB_UID 1000
-ENV CONDA_DIR /srv/conda
+ENV NB_USER=rstudio
+ENV NB_UID=1000
+ENV CONDA_DIR=/srv/conda
 
 # Set ENV for all programs...
-ENV PATH ${CONDA_DIR}/bin:$PATH
+ENV PATH=${CONDA_DIR}/bin:$PATH
 
 # Pick up rocker's default TZ
 ENV TZ=Etc/UTC
@@ -19,7 +19,7 @@ RUN echo "PATH=${PATH}" >> /usr/local/lib/R/etc/Renviron.site
 RUN echo "PATH=${PATH}" >> /etc/profile
 RUN echo "export PATH" >> /etc/profile
 
-ENV HOME /home/${NB_USER}
+ENV HOME=/home/${NB_USER}
 
 WORKDIR ${HOME}
 
@@ -51,7 +51,7 @@ RUN apt-get update > /dev/null && \
     rm -rf /var/lib/apt/lists/* && \
     rm -f /tmp/quarto.deb
 
-ENV SHINY_SERVER_URL https://download3.rstudio.org/ubuntu-18.04/x86_64/shiny-server-1.5.21.1012-amd64.deb
+ENV SHINY_SERVER_URL=https://download3.rstudio.org/ubuntu-18.04/x86_64/shiny-server-1.5.21.1012-amd64.deb
 RUN curl --silent --location --fail ${SHINY_SERVER_URL} > /tmp/shiny-server.deb && \
     apt install --no-install-recommends --yes /tmp/shiny-server.deb && \
     rm /tmp/shiny-server.deb
@@ -64,14 +64,34 @@ RUN wget --quiet -O /tmp/chrome.deb https://dl.google.com/linux/direct/google-ch
     rm -rf /var/lib/apt/lists/* && \
     rm -f /tmp/chrome.deb
 
+RUN install -d -o ${NB_USER} -g ${NB_USER} ${CONDA_DIR}
+
+USER ${NB_USER}
 COPY install-mambaforge.bash /tmp/install-mambaforge.bash
 RUN /tmp/install-mambaforge.bash
 
-USER ${NB_USER}
+USER root
+RUN rm -rf ${HOME}/.cache
 
+USER ${NB_USER}
 COPY environment.yml /tmp/environment.yml
+
 RUN mamba env update -p ${CONDA_DIR} -f /tmp/environment.yml && \
 	mamba clean -afy
+
+# Prepare VS Code extensions
+USER root
+ENV VSCODE_EXTENSIONS=${CONDA_DIR}/share/code-server/extensions
+RUN install -d -o ${NB_USER} -g ${NB_USER} ${VSCODE_EXTENSIONS} && \
+    chown ${NB_USER}:${NB_USER} ${CONDA_DIR}/share/code-server
+
+USER ${NB_USER}
+
+# Install Code Server Jupyter extension
+RUN ${CONDA_DIR}/bin/code-server --extensions-dir ${VSCODE_EXTENSIONS} --install-extension ms-toolsai.jupyter
+# Install Code Server Python extension
+RUN ${CONDA_DIR}/bin/code-server --extensions-dir ${VSCODE_EXTENSIONS} --install-extension ms-python.python
+RUN ${CONDA_DIR}/bin/code-server --extensions-dir ${VSCODE_EXTENSIONS} --install-extension quarto.quarto
 
 # Install IRKernel
 RUN R --quiet -e "install.packages('IRkernel', quiet = TRUE)" && \
