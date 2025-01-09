@@ -1,16 +1,12 @@
 #!/bin/bash
-# This downloads and installs a pinned version of mambaforge
+# This downloads and installs a pinned version of miniforge
 set -ex
 
 cd $(dirname $0)
-MAMBAFORGE_VERSION=24.9.2-0
+MINIFORGE_VERSION='24.11.2-1'
 
-URL="https://github.com/conda-forge/miniforge/releases/download/${MAMBAFORGE_VERSION}/Miniforge3-${MAMBAFORGE_VERSION}-Linux-x86_64.sh"
-INSTALLER_PATH=/tmp/mambaforge-installer.sh
-
-# make sure we don't do anything funky with user's $HOME
-# since this is run as root
-#unset HOME
+URL="https://github.com/conda-forge/miniforge/releases/download/${MINIFORGE_VERSION}/Miniforge3-${MINIFORGE_VERSION}-Linux-x86_64.sh"
+INSTALLER_PATH=/tmp/miniforge-installer.sh
 
 export XDG_CACHE_HOME=$(mktemp)
 
@@ -28,7 +24,7 @@ conda config --system --set show_channel_urls true
 # which seems to result in some effective pinning of packages in the initial env,
 # which we don't intend.
 # this file must not be *removed*, however
-echo '' > ${CONDA_DIR}/conda-meta/history
+echo > ${CONDA_DIR}/conda-meta/history
 
 # Clean things out!
 conda clean --all -f -y
