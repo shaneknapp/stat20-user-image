@@ -5,7 +5,7 @@ channels:
 
 dependencies:
 # Matches version in images/hub/Dockerfile
-- jupyterhub==4.1.6
+- jupyterhub==5.2.1
 
 - jupyterlab==4.3.4
 - notebook==7.3.2
